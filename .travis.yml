@@ -1,0 +1,34 @@
+# Specify docker as a dependency
+# Build test version of React project
+# Run tests
+# Build prod version of ALL projects
+# Push all to dockerhub
+# Tell EBS to update
+
+
+sudo : required
+language: generic 
+services: 
+    -docker
+
+before_install:
+    - docker build -t tomsou/react-test -f ./client/Dockerfile.dev ./client
+    
+
+script:
+    - docker run -e CI=true tomsou/react-test npm test
+    # - docker run for the other apps, if tests exist for them
+
+after success:
+    - docker build -t tomsou/multi-client ./client
+    - docker build -t tomsou/multi-nginx ./nginx
+    - docker build -t tomsou/multi-worker ./worker
+    - docker build -t tomsou/multi-server ./server
+
+
+# push to Dockerhub
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+- docker push tomsou/multi-client
+- docker push tomsou/multi-nginx
+- docker push tomsou/multi-worker
+- docker push tomsou/multi-server
