@@ -1,0 +1,40 @@
+    {
+        "AWSEBDockerrunVersion":2,
+        "containerDefinitions": [
+            {
+                "name": "client",
+                "image": "tomsou/multi-client",
+                "hostname": "client",
+                "memory": 128,
+                "essential": false
+            },
+            {
+                "name": "server",
+                "image": "tomsou/multi-server",
+                "hostname": "api",
+                "memory": 128,
+                "essential": false 
+            },
+            {
+                "name": "worker",
+                "image": "tomsou/multi-worker",
+                "hostname": "worker",
+                "memory": 128,
+                "essential": false 
+            },            
+            {
+                "name": "nginx",
+                "image": "tomsou/multi-nginx",
+                "hostname": "nginx",
+                "essential": true,
+                "memory": 128,
+                "portMappings":[
+                    {
+                        "hostPort": 80,
+                        "containerPort": 80
+                    }
+                ],
+                "links": ["client", "server"] 
+            }
+        ]
+    }
